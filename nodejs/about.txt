@@ -1,0 +1,88 @@
+1、nodejs 模块及其作用
+
+assert           为应用程序的单元测试添加断言处理
+buffer 	         用于二进制数据的存储与转换
+url              用于实现URL字符串的解析与格式化
+events           用于为事件处理提供一个基础类
+fs               用于操作文件及文件系统
+path             用于处理文件路径
+						==>path.normalize(p)   转化成路径字符串并返回
+						==>path.join([path1,path2.....])  多个字符串合并
+						==>path.resolve([path1,path2.....])规则请查询
+						==>path.basename(p)获取文件名
+						==>path.extname(p)获取后缀名
+http             用于实现HTTP服务器端及客户端
+						==> httpTest.js
+https            用于实现HTTPS服务器端及客户端
+console          用于为控制台输出信息
+querystring      用于处理HTTP请求中使用的查询字符串
+net              用于创建TCP服务器及客户端
+util             用于实现各种实用函数
+os               用于获取操作系统信息
+cypto            用于实现数据的加密解密处理
+string_decoder   用于实现从二进制数据到字符串数据之间的转换
+vm               用于为JavaScript脚本代码提供一个独立的运行环境
+dns              用于实现与DNS的处理
+child_process    用于子进程的创建与管理
+cluster          用于实现多进程
+debugger         用于实现一个内置调试器来帮助开发者调试应用程序
+domain           用于实现多个I/O之间的协作处理
+punycode         用于实现Punycode字符串的编码及解码
+readline         用于读取一行标准输入流
+repl         	 用于实现REPL(Read-Eval-Print-Loop)交互式运行环境
+stream     		 用于为流的输入/输出处理提供一个基础类
+tls              用于使用OpenSSL来实现TLS/SSL通信处理
+tty              用于获取来自于TTY终端的信息
+zlib             内部使用zlib类库来实现数据的压缩及解压处理
+
+
+2、nodejs中增加的类、函数与对象
+
+Buffer类         用于为二进制数据的存储提供一个缓存区
+setTimeout函数
+clearTimeout函数
+setInterval函数
+clearInterver函数
+require函数       用于加载模块
+module对象        用于访问模块信息
+process对象       用于范文进程信息
+EventEmitter类    用于事件的类
+			addListener(event,listener)					对指定事件绑定事件处理函数
+			on(event,listener)							同上
+			once(event,listener)						对指定事件绑定只执行一次的事件处理函数
+			removeListener(event,listener)				对指定事件接除事件处理函数
+			removeAllListeners([event])					对指定事件接除所有事件处理函数
+			setMaxListener(n)							设置指定事件的处理函数最大数量，n为正整数，默认最多十个
+			listeners(event)							获取指定事件的所有事件处理函数
+			emit(event,[arg1],[arg2],[arg3],[arg4]...)	手工触发指定事件
+			listenerCount(emitter,event)				获取指定事件的事件处理函数的数量
+
+
+3.node-inspector调试工具的使用
+			node  --debug-brk app.js 					运行文件
+			node-inspector 								启动调试工具
+			http://localhost:8080/debug?port=5858 		浏览器打开调试
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

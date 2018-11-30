@@ -1,0 +1,71 @@
+function函数
+1、普通函数。返回值实际上是undefined
+2、包含return语句的函数。
+
+
+函数的参数理解：arguments类数组
+	修改命名参数不会改变argument中的参数值，（反之则会改变命名参数的值，属于单向改变。但是他们的内存空间是独立的。只是值一样。）
+	arguments的对象的长度是调用时传入的参数数量决定的，并不是定义函数时参数的个数决定的。
+	js函数没有重载概念，而在Java中是可以为函数编写两个定义的。只要这两个定义的签名不同即可。
+	而js函数时没有签名的。所以真正的重载是不可能做到的。
+所以可以利用传入参数的不同对函数实现重载的性质。
+
+arguments转数组
+	1、Array.prototype.slice.apply(arguments)
+		这是运行效率比较快的方法（看别人资料说的）,为什么不是数组也可以，
+		因为arguments对象有length属性，而这个方法会根据length属性,返回一个具有length长度的数组。
+		若length属性不为number，则数组长度返回0;所以其他对象只要有length属性也是可以的哟，
+		如对象中有属性0,对应的就是arr[0],即属性为自然数的number就是对应的数组的下标，若该值大于长度，当然要割舍啦！
+	2、Array.prototype.concat.apply(thisArg,arguments)。,thisArg是新的空数组，
+		apply方法将函数this指向thisArg，arguments做为类数组传参给apply。根据apply的方法的作用,
+		即将Array.prototype.slice方法在指定的this为thisArg内调用，并将参数传给它。
+		用此方法注意:若数组内有数组，会被拼接成一个数组。原因是apply传参的特性。
+	3、我自己想了个方法，利用Array的构造函数,如Array(1,2,3,4,5,6);可以返回一个传入的参数的数组，
+		那Array.apply(thisArg,arguments)也可以将arguments转化为数组，果然实验是可以的;
+		有没有什么影响呢，就是乱用了构造函数，但这也是js的特性嘛。构造函数也是函数。
+		用此方法注意:若数组内有数组，会被拼接成一个数组。原因是apply传参的特性。
+	4、用循环，因为arguments类似数组可以使用arguments[0]来访问实参，
+		那么将每项赋值给新的数组每项，直接复制比push要快，若实参有函数或者对象，就要深拷贝。
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

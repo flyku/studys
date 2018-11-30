@@ -1,0 +1,23 @@
+{
+"configs" : [
+  {
+"server" : "67.209.190.39",
+"server_port" : 443,
+"password" : "H3RhtDFRRb",
+"method" : "aes-256-cfb",
+"remarks" : ""}
+,
+  {
+"server" : "66.112.220.134",
+"server_port" : 443,
+"password" : "qSYPdBXMOg",
+"method" : "aes-192-cfb",
+"remarks" : ""}
+
+],
+"index" : 1,
+"global" : false,
+"enabled" : true,
+"shareOverLan" : false,
+"isDefault" : false,
+"localPort" : 1080}

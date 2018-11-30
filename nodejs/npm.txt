@@ -1,0 +1,8 @@
+npm install	packageName					安装包
+npm uninstall packageName				卸载包
+npm install -g packageName				全局安装包
+npm search packageName					搜索包
+npm view packageName					查看包信息
+npm update packageName					更新包
+npm list packageName					查看安装的所有包
+npm root -g packageName					查看全局包的安装路径

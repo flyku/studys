@@ -1,0 +1,169 @@
+一、js简介
+js组成部分（1995.2-1997.5（第一版ECMAscript））
+
+1、核心  ECMAscript
+2、DOM   文档对象模型   Document Object Model
+3、BOM   浏览器对象模型 Browser Object Model
+
+二、html中使用js
+script元素的六个属性
+1、async  可选  表示应该立即下载脚本，只对外部脚本文件有限
+2、charset 可选  表示指定的代码的字符集（大部分浏览器忽略）
+3、defer  可选  表示脚本可以延迟到文档完全被解析和显示之后被执行
+4、language 已废弃
+5、src 可选 表示包含要执行代码的外部文件
+6、type 可选 可以看成是language的替代。
+
+三、js基本概念
+严格模式的概念 "use strict" （pragma（编译指示））
+js中分号不准省略。
+1、关键字（关键字错误=Idemtifier Expected）
+break、do、instanceof、typeof、case、else、new、var、catch、finally、return、void、continue
+for、switch、while、debugger、function、this、with、default、if、throw、delete、in、try
+2、保留字
+abstract、enum、int、short、boolean、export、interface、static、byte、extents、long、super
+char、final、native、synchronized、class、float、package、throws、const、goto、private、transient
+debugger、implements、protected、volatile、double、import、public、let、yield
+
+3、变量=变量是松散类型的，所谓松散类型就是可以用来保存任何类型的数据。也就是说每个变量仅仅是一个保存至的占位符而已。
+var message;（未经过初始化的变量，均会分配undefined值）
+使用var定义的变量将成为定义该变量的作用域中的局部变量。也就是说，如果在函数中使用var定义一个变量，那么在函数退出后，变量就会被销毁！
+例如：
+		function test(){
+			var message = "hi";//局部变量，函数具有块级作用域
+		}
+		test();
+		alert(message);//报错
+4、五中基本数据类型
+undefined、null、boolean、number、string
+加上一种复杂的数据类型--object
+数据类型具有动态性，是可以随意改变的。
+
+5、typeof检测变量的数据类型（操作符的操作数可以是变量也可以是具体数值（typeof 95返回    'number'））
+返回值是：undefined、boolean、number、string、object、function
+
+6、未经定义的变量执行结果
+	var message;
+	alert(message);//输出undefined
+	alert(age);    //报错
+	//如果说使用typeof操作符，则不会出现报错
+	alert(message);//输出undefined
+	alert(age);    //输出undefined
+	//建议显示定义变量的值，便可以使用typeof来检测变量是不是未定义，区分开并不是未初始化
+	//实际上undefined是派生自null的，说以js中undefined == null  返回值是true
+	//有意保存对象的变量最好初始化为 var message = null;
+
+7、布尔值转换规则
+	Boolean		true								false
+	String		任何非空字符串						""字符串
+	Number		任何非零数字值（包括无穷大）		0和NaN
+	Object		任何对象							null
+	Undefined   n/a(not applicable不适用)                                  undefined
+
+8、Number类型：
+	整数
+	浮点数（双精度数值）
+	八进制（严格模式下无效）第一位必须是0，然后是数字序列（0~7），如果字面值中的数值超出了范围，那么前导零将被忽略，将被解析为十进制。
+	十六进制前两位必须是0x，后跟任何十六进制数字（0~9及A~F（可以是大写，也可以是小写））
+	js中算数计算时，所有的都是转化成十进制，按十进制计算。
+	js中可以写作+0或者-0；并且是相等的。
+	科学计算法：3.12E5    3.12E-5(小数)
+	浮点数的最大精度是17位小数
+	数值范围：最小：Number.MIN_VALUE 5e-324;最大：Number.MAX_VALUE 1.7976931348623157e+308
+	超出后会有：-Infinity ~ +Infinity（负无穷 ~ 正无穷）
+	判断是否在范围内：isFinite()函数
+			例如:
+				var result = 26E20;
+				isFinite(result);
+				var result1 = Number.MIN_VALUE + Number.MAX_VALUE;
+				isFinite(result1);
+				Number.MAX_VALUE == Infinity  返回false
+				Number.MIN_VALUE == -Infinity  返回false
+				Number.POSITIVE_INFINITY == Infinity
+				Number.NEGATIVE_INFINITY == -Infinity
+				NaN  （Not a Number）两大特点：任何涉及NaN的都会返回NaN;NaN和任何值都不相等，包括自身NaN
+				isNaN()函数
+数值转换：
+	如果是布尔值，true和false转换为1和0；
+	如果是数字值，只是简单的传入和返回；
+	如果是null，返回0；
+	如果是undefined，返回NaN；
+	如果是字符串，有如下规则：
+			1、字符串中包含数字（包括前面带正号或负号的情况），则将其转换成十进制数值，
+					即‘1’变成1，‘123’变成123，而‘011’变成11（前导0会被忽略）
+			2、字符串中包好有效的浮点格式，如‘1.1’变成1.1浮点数，（前导0同样也会被忽略）；
+			3、字符串包含有效的十六进制格式，如‘0xf’，则会被转化成相同大小的十进制整数值；
+			4、字符串是空的（不包含任何字符），则将其转化为0；
+			5、字符串中包含除上述格式之外的字符，则将其转化为NaN；
+			6、如果是对象，将调用valueof()方法,然后依照前面的规则转换返回的值，如果转换结果是NaN,则调用对象的toString()方法，然后按照前面的规则转换；
+		例如：
+			var num1 = Number("hello word!");  //NaN
+			var num2 = Number("");             //0
+			var num3 = Number("0000000111");   //11
+			var num4 = Number("true");         //1
+			var num5 = Number("{'s':1}");      //NaN(后续讲解)
+		parseInt()转换规则：第一个参数被转化的字符串，第二个参数进制
+			1、忽略字符串的空格，直到找到附一个非空格字符。
+			2、如果第一个字符不是数字字符或者负号就会返回NaN；也就是说转换空字符串会返回NaN;Number()则会返回0；
+			3、如果以0x开头，则会按十六进制解析，如果以0开头，并后面跟数字字符，则按八进制解析。
+		例如：
+			var num1 = parseInt("123blue"); //123
+			var num2 = parseInt("");	 	//NaN
+			var num3 = parseInt("0xA");     //10(十六进制)
+			var num4 = parseInt(22.5);      //22
+			var num5 = parseInt("070");     //56(八进制)
+			var num6 = parseInt("70");      //70(十进制)
+			var num7 = parseInt("0xf");     //15(十六进制)
+		parseFloat()转换规则：
+			1、第一个小数点有效，往后的都被舍去；
+			2、十六进制的都会被转化为0；
+			3、没有第二个参数；
+			4、无小数点或者小数点后全是0.则会被换为整数值；
+
+9、string类型
+js中的字符串类型是不可变得！也就是说字符串一旦创建，值就不能改变，要改变，必须先销毁原先的值。在填充该变量。
+toString()转换为字符串的方法，几乎所有值都有的方法。null和undefined没有此方法。有一个参数：基数（进制2、8、10、16）；
+转型函数：String()规则如下：
+			1、如果有toString()方法，则调用并返回相应的结果。
+			2、如果是null则返回“null”
+			3、如果值是undefined，则返回“undefined”
+PS:与""相加也可以实现字符串转换；
+
+10、Object类型：var obj = new Object();
+	每个对象实例都具有下列属性和方法：
+		1、constructor属性：保存着用于创建当前对象的函数。对于前面例子而言，构造函数就是（constructor）就是Object();
+		2、hasOwnProperty(propertyName)：用于检查给定的属性在当前对象实例中（而不是在实例的原型中）是否存在。
+				其中，作为参数的属性名（propertyName）必须以字符串形式指定。例如：hasOwnProperty("propertyName");
+		3、isPrototypeOf(Object)：用于检查传入的对象是否是另一个对象的原型。
+		4、PropertyIsEnumerable(propertyName)：用于检查给定的属性是否能够使用for-in语句来枚举。
+				作为参数的值必须是字符串形式。PropertyIsEnumerable("propertyName")
+		5、toLocaleString()：返回对象的字符串表示，该字符串与执行环境的地区对应。
+		6、toString()：返回对象的字符串表示。
+		7、valueOf()：返回对象的字符串表示、数值或布尔值表示。通常与toString()方法的返回值相同。
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

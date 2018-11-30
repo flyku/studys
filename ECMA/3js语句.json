@@ -1,0 +1,125 @@
+1、if语句
+	if (condition){
+		statement1
+	} else {
+		statement2
+	}
+
+2、do...while语句：后测试循环语句。（循环体内的代码至少会被执行一次）
+	do {
+		statement
+	} while (expression);
+
+3、while语句：前测试循环语句。（有可能循环体内的代码永远不会被执行）
+	while (expression) {
+		statement
+	};
+
+4、for语句：（前测试循环语句）(有可能不会执行循环体内的代码，如果执行了，则一定会对循环后的表达式求值。)
+	for (initialization; expression; post-loop-expression){
+		statement
+	};
+
+5、for...in语句：枚举对象的属性。PS:ECMAscript3之前，如果对象时null或者undefined则会抛出错误。5版本之后修复。
+	for (var property in expression){
+		statement
+	}
+
+6、label语句：添加标签。即为代码段替代。
+	label：statement
+	例如：
+		start：for(var i = 0;i<10;i++){
+			alert(i);
+		}
+	start标签可以在将来由break或continue语句引用。加标签的语句一般都是要与for等循环语句配合使用的。
+
+7、break和continue语句：break会立即退出循环。
+
+8、with语句：将代码的作用域设置到一个特定的对象中。简化多次编写同一个对象的工作。
+	with (expression){
+		statement
+	};
+	例如：
+		var qs = location.search.substring(1);
+		var hostname = location.hostname;
+		var url = location.href;
+	简化：
+		width (location){
+			var qs = search.substring(1);
+			var hostname = hostname;
+			var url = href;
+		}
+	
+
+9、switch语句：在比较时，使用的是全等运算，不会发生类型转换。
+	switch (expression){
+		case value:
+			statement;
+		break;
+		case value:
+			statement;
+		break;
+		case value:
+			statement;
+		break;
+		default:statement;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
