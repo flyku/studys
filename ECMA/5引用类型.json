@@ -18,5 +18,3 @@ Array.isArray()方法
     reverse()  倒序数组
     sort()     升序排列，可传function  比较得永远是字符串
 
-
-    

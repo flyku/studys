@@ -1,0 +1,115 @@
+1、navigator.onLine
+    为true表示设备在线。
+
+2、online事件，从离线变为在线触发
+    offline事件，从在线变为离线时触发
+
+
+3、应用缓存：h5应用缓存简称appcache（application cache）；
+        可以使用描述文件指定离线资源
+        制定离线资源的方式：
+    <html manifest="/offline.manifest">
+    并且：MIME必须为text/cache-manifest-------------------------------------
+
+4、applicationCache对象又一个status属性，不同值表示离线缓存不同的状态
+        applicationCache.update()//更新离线缓存
+        更新后需要手动监听updateready事件启用新的缓存。
+
+
+
+5、cookie：持久客户端状态
+        限制：限制在特定域名下的
+安全性：cookie是创建在客户端的计算机上的，防止被恶意篡改。不会占用太多磁盘。
+
+cookie构成：
+        名称：不区分大小写
+        值：字符串值
+        域：是对哪个域有效的
+        路径：对于制定域中的那个路径，应该向服务器发送cookie
+        失效时间：表示被删除的时间
+        安全标志：指定后，cookie只有在ssl连接的时候才会发送到服务器
+
+        cookie操作方法：
+        var cookieUtil = {
+            get:function(name){
+                var cookieName = encodeURIComponent(name) + "=",
+                    cookieStart = document.cookie.indexOf(cookieName),
+                    cookieValue = null;
+                if(cookieStart > -1){
+                    var cookieEnd = document.cookie.indexOf(";",cookieStart);
+                    if(cookieStart == -1){
+                        cookieEnd = document.cookie.length;
+                    }
+                    cookieValue = decodeURIComponent(document.cookie.substring(cookieStart+cookieName.length,cookieEnd));
+                }
+                return cookieValue;
+            },
+            set:function(name,value,expires,path,domain,secure){
+                var cookieText = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+                if(expires instanceof Date){
+                    //注意空格
+                    cookieText += "; expires=" + expires.toGMTString();
+                }
+                if(path){
+                    //注意空格
+                    cookieText += "; path=" + path;
+                }
+                if(domain){
+                    //注意空格
+                    cookieText +="; domain=" + domain;
+                }
+                if(secure){
+                    //注意空格
+                    cookieText +="; secure=" + secure;
+                }
+                document.cookie = cookieText;
+            },
+            unset:function(name,path,domain,secure){
+                this.set(name,"",new Date(0),path,domain,scure);
+            }
+        }
+
+6、localStorage对象
+7、sessionStorage对象
+8、IndexedDB数据库
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

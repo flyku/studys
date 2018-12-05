@@ -1,0 +1,5 @@
+鉴于E4X的很多方面与js到来了不同
+默认只启用了部分特性接口
+需要完全启用，可以把
+script标签的type设置为
+"text/javascript;e4x=1"

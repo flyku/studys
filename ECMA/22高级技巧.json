@@ -1,0 +1,235 @@
+1、使用高级函数
+    所有的函数都是对象-------------------------
+    安全类型的检测：
+        构造函数不使用new操作符调用，由于this的晚绑定会造成全局属性的增加
+        比如：name属性覆盖
+            导致window.name并不能获取到正确的窗口的name，而导致无法操作窗口
+            PS:--------------------window的name属性是识别连接目标和框架的
+        解决方式就是创建一个安全的作用域函数。（只有函数有块级作用域）
+        function Person(name,age,job){
+            if(this instanceof Person){
+                this.name = name;
+                this,age = age;
+                this.job = job;
+            }else{
+                return new Person(name,age,job);
+            }
+        };
+
+
+2、惰性载入函数：最后返回：return 函数调用()；
+        第一种：
+        function creat(){
+            if(){
+                creat=function(){}
+            }else{
+                creat=function(){}
+            }
+            return creat();
+        }
+        第二种：匿名、自执行函数
+        var creat = function(){
+            if(){
+                return function(){}
+            }else{
+                return function(){}
+            }
+        }();
+
+3、函数的绑定
+        var handler = {
+            message:"Event handle",
+            handelClick:function(event){
+                alert(this.message);
+            }
+        }
+        var btn = document.getElementById("id");
+        EventUtil.addHandler(btn,"click",handler.handleClick);
+//弹出应该是Event handle，但却是undefined。因为此时this并不是指对象handler
+//而是指向了btn（ie8中指向了window）
+        闭包修正---------------------
+        
+        var handler = {
+            message:"Event handle",
+            handelClick:function(event){
+                alert(this.message);
+            }
+        }
+        var btn = document.getElementById("id");
+        EventUtil.addHandler(btn,"click",function(event){
+            handler.handleClick(event);
+        });
+
+代码量大了 不利于维护所以出现了bind()函数绑定this的上下文环境。-------------
+            bind实现
+                function bind(fn,context){
+                    return function(){
+                        return fn.apply(context,arguments);
+                    }
+                }
+                实现如下：----------------------
+                var handler = {
+                    message:"Event handle",
+                    handelClick:function(event){
+                        alert(this.message);
+                    }
+                }
+                var btn = document.getElementById("id");
+                EventUtil.addHandler(btn,"click",handler.handleClick.bind(handler));
+
+
+4、函数的柯里化：柯里化（Currying）是把接受多个参数的函数变换成接受一个单一参数(最初函数的第一个参数)的函数，
+                并且返回接受余下的参数且返回结果的新函数的技术。
+        和bind实现方式一样，通过一个闭包返回一个函数。
+    例如：
+                function add(num1,num2){
+                    return num1 + num2;
+                };
+                function curriedAdd(num2){
+                    return add(5,num2);
+                }
+                add(2,3);//5
+                curriedAdd(3);//8
+
+         柯里化实现函数:
+                function curry(fn){
+                    //arguments类数组转数组
+                    var args = Array.prototype.slice.call(arguments,1);//取得第二个以后所有参数
+                    return function(){
+                        var innerArgs = Array.prototype.slice.call(arguments);
+                        var finalArgs = args.concat(innerArgs);
+                        return fn.apply(null,finalArgs);
+                    }
+                }
+bind的高级柯里化使用：
+                function curry(fn,context){
+                    //arguments类数组转数组
+                    var args = Array.prototype.slice.call(arguments,2);//取得第三个以后所有参数
+                    return function(){
+                        var innerArgs = Array.prototype.slice.call(arguments);
+                        var finalArgs = args.concat(innerArgs);
+                        return fn.apply(context,finalArgs);
+                    }
+                }
+
+
+5、防篡改对象：定义为防篡改对象后，是无法撤销的。
+
+6、不可扩展对象：
+        Object.preventExtensions(obj);
+            这样之后对象就不可以添加新属性和方法了。
+            但是已有的属性方法不受任何影响。
+
+
+        Object.istExtensible(obj);
+                可以确定对象是不是可以扩展。
+
+
+
+7、密封的对象。Object.seal(obj);
+                密封后对象的[[Configurable]]属性被设置成false，
+                对象不可更改，也不可以被Object.defineProperty()修改。
+
+
+              Object.isSealed(obj);
+                判断对象是否被密封
+
+
+8、冻结的对象：既不可扩展，也是密封的。
+                Object.freeze()
+                    把对象的[[Writable]]属性设置为false
+
+                Object.isFrozen()
+                    验证函数是否被冻结
+
+9、高级定时器
+            定时器并不是线程，js是执行在单线程环境下的。
+            定时器原理是：在特定时间时，把代码插入到js的执行队列。
+            定时器时间时代表多长时间后插入到队列，并不是多少时间后执行，除非js进程空闲，才会执行。
+
+                    自定义事件---------------------------------------------------------------------------------
+10、事件是一种叫做观察者的设计模式。
+            是一种创建松散耦合代码的技术
+            观察者模式有两类对象组成：主体和观察者
+                a、主体负责发布事件
+                b、观察者负责订阅这些事件来观察主体
+        实例代码：
+        function EventTarget(){
+            this.handlers={};
+        }
+        EventTarget.prototype = {
+            constructor:EventTarget,
+            addHandler:function(type,handelr){
+                if(typeof this.handlers[type] == "undefined"){
+                    this.handlers[type] = [];
+                }
+                this.handlers[type].push(handler);
+            },
+            fire:function(event){
+                if(!event.target){
+                    event.target = this;
+                }
+                if(this.handlers[event.type] instanceof Array){
+                    var handlers = this.handlers[event.type];
+                    for(var i = 0，len = handlers.length;i<len;i++){
+                        handlers[i](event);
+                    }
+                }
+            },
+            removeHandler:function(type,handler){
+                if(this.handlers[type] instanceof Array){
+                    var handler = this.handlers[type];
+                    for(var i = 0，len = handlers.length;i<len;i++){
+                        if(handlers[i] === handler){
+                            handlers[i](event);
+                        }
+                    }
+                    handlers.splice(i,1);
+                }
+            }
+        };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

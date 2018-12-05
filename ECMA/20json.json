@@ -1,0 +1,69 @@
+1、json只是一种数据结构，不从属于js
+    是js实现的一个严格子集
+
+2、js实现了json的解析和序列化
+   JSON。stringify(obj); 
+还可以加两个参数，
+    第二个参数如果是数组：过滤器得作用
+    JSON.stringify(obj,[key1,key2...]); 
+    第二个参数如果是函数：过滤器得作用
+    火狐4之前版本不支持------------------
+    JSON.stringify(obj,function(key,value){
+        //循环对象，对不同得key得值实行不同得序列化方式
+        return undefined;//表示沪铝此值得序列化
+    }); 
+返回值只会包括数组中制定得键值。
+
+
+
+3、JSON.parse(string);//序列化json对象
+和stringify()用法一直。
+如果返回undefined，则删除某个值，如果返回新值，则替换该值。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

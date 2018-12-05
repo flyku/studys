@@ -1,0 +1,209 @@
+1、ajax
+    XMLHttpRequest对象
+        ie7+和其他浏览器使用此对象需要new XMLHttpRequest();
+        低版本支持需要加入creatXHR函数兼容；
+        var XHR = new XMLHttpRuquest();
+        //第一步，调用open()方法
+        //三个参数：请求类型，URL，是否异步得布尔值
+        XHR.open("get","URL",false);
+        //第二步：调用send()方法
+        //一个参数，请求主体发送得数据，
+        //如果没有要通过请求主体发送得数据，必须传入null，某些浏览器是必须参数。
+        XHR.send();
+        XHR.responseText:响应主体被返回得文本
+        XHR.responseXML:如果返回的内容类型是"text/xml","application/xml",
+                        响应数据得类型被保存在此属性里。
+        XHR.status:响应的HTTP状态。
+        XHR.statusText:响应HTTP状态的说明。
+    XMLHttpRequest事件
+
+2、HTTP头部信息
+    Accept：浏览器可以处理的内容类型。
+    Accept-Charset:浏览器能够显示的字符集。
+    Accept-Encoding:浏览器能够处理的压缩编码。
+    Accept-Language：浏览器当前设置的语言。
+    Connection：浏览器与服务器之间的连接类型。
+    Cookie：当前页面设置的任何cookie。
+    Host：发出请求的页面所在域。
+    Referer：发出请求的页面url，"Referrer"===此单词拼写错误，将错就错--------------------
+    User-Agent：浏览器的用户代理字符串。
+    自定义头部信息必须在open之后send之前使用：
+        setRequestHeader("头部字段","头部字段的值")
+    进行头部设置。
+    与之对应的获取方法：getResponseHeader("头部字段名称")方法。
+    getAllResponseHeaders():获取全部头部信息，返回一个字符串。
+    XMLHttpRequest2添加了formData类型，send时使用此类型，无需明确设置请求头部信息-------------------------------
+                还增加了overrideMineType()强制重写MIME类型的方法。
+
+
+3、进度事件：
+        loadstart:接收第一个字节时触发
+        progress:接收响应期间不断的触发
+        error: 发生错误时触发
+        abort: 调用abort方法终止连接时触发
+        load: 接受完整的数据触发
+        loadend:通信完成或者error，abort，load事件完成后触发
+    目前还没有浏览器支持loadend事件。
+
+
+4、跨域问题
+        cors跨源共享资源
+        Origin头部（包含协议，域名，端口），服务器通过这个判断是否给与响应
+        Origin:http://www.flyku.com
+        如果接受：会回发
+        Axxess-Control-Allow-Origin:http://www.flyku.com
+检查是否支持跨域cors方式请求：只需要检测是否存在withCredentials属性
+再结合检测ie的XDomainRequest对象是否存在，就可以兼顾所有浏览器了
+方法如下：
+    function creatCORSRequest(method,url){
+        var xhr = new XMLHttpRequest();
+        if("withCredentials" in xhr){
+            xhr.open(method,url,true)
+        }else if(typeof XDomainRequest != "undefined"){
+            xhr = new XDomainRequest();
+            xhr.open(method,url);
+        }else{
+            xhr=null;
+        }
+        return xhr;
+    }
+    var request = creatCORSRequest(method,url);
+    if(request){
+        request.onload = function(){
+            //对request.responseText进行处理
+        }
+        request.send();
+    }
+
+
+5、img标签跨域方式（单向跨域）---------------------
+    var img = new Image();
+    img.onload = img.onerror = function(){
+        alert("Done!");
+    }
+    img.src = "url"//请求的同时发送了name参数
+    限制：一是只能是get请求
+          二是单向通信，不能接受服务器的返回信息
+
+6、JSONP方式跨域：包含在函数中的json
+    http://freegeoip.net/json?callback=handleResponse
+    指定返回时要调用的函数为：handleResponse
+不足：一是不安全，返回时防止加入攻击代码
+     二是确定请求是否失败不太容易实现。
+
+
+
+
+
+7、Comet：更高级的ajax，常被称为服务器推送
+短轮询：浏览器发送请求====》服务器返回请求，
+长轮询：浏览器发送请求      服务器检测是否更新内容返回给===》浏览器===》浏览器发送请求
+两者的区别在于服务器如果发送数据----------------------------
+
+第二种comet：HTTP流实现
+
+
+8、服务器发送事件：SSE  
+        浏览器创建一个链接，服务器可以向浏览器发送任何数据。
+    var source = new EventSource("muevents.php");//页面必须和url同源
+    source.onmessage = function(event){
+        var data = event.data;
+        //处理数据
+        。。。。。
+    }
+    source.close();//关闭连接
+    open:建立连接时触发
+    message：接收到新事件时触发
+    error：无法建立连接时触发
+MIME类型为：text/event-stream
+
+
+
+9、web sockets------------------------------------------
+目标是提供在一个单独的持久连接上提供全双工、双向通信。
+        ws://未加密模式url
+        wss://加密模式url
+        对比http
+        http://
+        https://
+var socket = new WebSocket("ws://");//不受同源策略限制
+属性：
+
+ws.OPENING(0):正在建立连接
+ws.OPEN(1)：已经建立连接
+ws.CLOSING(2)：正在关闭连接
+ws.CLOSE(3)：已经关闭连接
+
+socket.close();//关闭连接，随时可以关闭
+
+socket.send("数据");//发送数据，只能是纯文本
+        //json数据发送之前必须JSON.stringifg()序列化
+
+服务器向客户端发送消息，客户端就会触发message事件。
+类似XHR的传递消息协议--------------------------------------------
+socket.onmessage = function(event){
+    var data = event.data;
+    //处理数据
+}
+
+其他事件：
+    open：成功创建连接时触发
+    error：发生错误时触发
+    close：连接关闭时触发
+
+    ws不支持DOM2级事件监听，所以必须使用DOM0级监听----------------
+    socket.onclose = function(event){
+        //只有此时event有额外的三个属性
+        wasClean：是否明确关闭的布尔值
+        code：服务器返回的数值状态码
+        reason：服务器发回的信息
+    }
+
+对于未授权系统有权访问某个资源的情况，称之为CSRF（Cross-Site Request Forgery跨站点请求伪造）
+/getuserinfo.php?id=23
+
+23用户id   可以随意篡改
+
+
+安全要求：
+            1、要求使用SSL（高级加密握手协议）连接来访问可以通过XHR请求的资源
+            2、要求每一次请求都要附带经过相应算法计算得到的验证码
+            下列方法对CSRF不起作用：
+                1、要求使用psot
+                2、检测来源url确定是否可信
+                3、基于cookie信息进行验证
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

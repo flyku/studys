@@ -1,0 +1,89 @@
+1、函数声明都存在提升的，任何地方定义，任何地方调用。
+    而函数表达式必须在定义后才可以调用。
+
+2、匿名函数也叫拉姆达函数：name属性是空字符串。
+
+3、递归函数：
+    function factorial(num){
+        if(num <= 1){
+            return 1;
+        }else{
+            return num*factorial(num-1);
+        }
+    }
+    var anotherFactorial = factorial;
+    factorial = null;
+    anotherFactorial(4);//报错，因为函数中调用了factorial，此时已经不存在了；
+    解决方式：arguments.callee，是一个指向正在执行的函数的指针------------------------------------------------------
+    function factorial(num){
+        if(num <= 1){
+            return 1;
+        }else{
+            return num*argument.callee(num-1);
+        }
+    }
+    严格模式下是不存在argument.callee可以使用名命函数表达式实现
+    此方式通用：---------------------------------------------------------------------
+    var factorial = (function f(num){
+        if(num <= 1){
+            return 1;
+        }else{
+            return num*f(num-1);
+        }
+    })
+    
+4、闭包：有权访问另一函数作用域中变量的函数。
+
+5、this对象
+        匿名函数的执行环境具有全局性：如下
+    var name = "the window";
+    var object = {
+        name:"my object",
+        getNameFunc:function(){
+            return function(){
+                return this.name
+            }
+        }
+    }
+    object.getNameFunc()();//the window(非严格模式下)
+    由于每个函数在调用时都会取得两个变量：this和arguments
+    内部函数在搜索这两个变量时，只会搜索到活动对象为止。
+    永远不可能访问到外部函数中的两个变量。
+    不过可以通过保存外部变量的this：实现改变：
+    var name = "the window";
+    var object = {
+        name:"my object",
+        getNameFunc:function(){
+            var that = this;---------------------------
+            return function(){
+                return that.name
+            }
+        }
+    }
+    object.getNameFunc()();//the object
+
+6、内存泄漏(ie中产生)
+    如果活动对象被匿名函数保存了一个引用，如下：造成内存无法销毁
+    function assign(){
+        var element = document.getElementById("id");
+        element.onclick = function(){
+            alert(element.id);
+        }
+    }
+    改：
+    function assign(){
+        var element = document.getElementById("id");
+        var id = elemnt.id;
+        element.onclick = function(){
+            alert(id);
+        }
+        element = bull;
+    }
+    通过保存一个副本，并设置为空；解除对dom的引用。
+
+
+
+
+7、模仿块级作用域
+    匿名函数模仿块级作用域:私有作用域
+    (function(){})()

@@ -1,0 +1,252 @@
+1、es5中对象有两种属性：
+        a、数据属性
+        b、访问器属性
+    a、数据属性有四个特性：
+        [[Configurable]]:表示是否可以通过deleted删除
+        [[Enumerable]]：表示是否可以通过for-in循环返回属性
+        [[Writable]]:表示能否修改属性得值
+        [[Value]]:属性得数据值，读取，写入都是改变此值，默认是undefined
+    要修改属性默认特征必须使用Object.defineProperty(),
+    方法有三个参数：属性所在对象，属性名字，一个描述符对象
+    最后一个参数是包含Configurable，Enumerable，Writable，Value四个值之一或多个
+
+    b、访问器属性：包含一对getter和setter函数，这两个函数不是必须得！
+        四个特性
+        [[Configurable]]:表示是否可以通过deleted删除
+        [[Enumerable]]：表示是否可以通过for-in循环返回属性
+        [[Get]]:读取函数
+        [[Set]]:写入函数
+        Object.defineProperty(obj,"属性"，{
+            get:function(){},
+            set:function(){}
+        })
+
+设计模式总结--------------------------------------------
+3、工厂模式
+        function creatPerson(name,age,job){
+            var o=new Object();
+            o.name=name;
+            o.age=age;
+            o.job=job;
+            o.sayName=function(){
+                alert(this.name);
+            };
+            return o;
+        }
+        var p1 = creatPerson("name","age","SoftwareEngineer");
+        var p2 = creatPerson("name","age","SoftwareEngineer");
+        解决了多个相似对象创建得问题，却没有解决对象识别得问题。
+    于是出现了
+4、构造函数模式：
+    function Person(name,age,job){
+        this.name = name;
+        this.age = age;
+        this.job = job;    
+        this.sayName = function(){
+            alert(this.name);
+        }
+    }
+    var p1 = new Person("name","age","SoftwareEngineer");
+    var p2 = new Person("name","age","SoftwareEngineer");
+    四个不同与工厂模式得特点
+        a、没有显示创建对象
+        b、直接将属性和方法赋给了this对象；
+        c、没有return语句
+        d、首字母大写，创建实例必须使用new操作符
+由于构造函数实例化每个对象时，都会把方法初始化一遍，
+所以出现了
+5、原型模式
+        function Person(){};
+        由于每个函数都有一个prototype（原型）属性
+        Person.prototype.name = "name";
+        Person.prototype.age = "age";
+        Person.prototype.job = "job";
+        Person.prototype.sayName =  function(){
+            alert(this.name);
+        } 
+        var p1 = new Person("name","age","SoftwareEngineer");
+        var p2 = new Person("name","age","SoftwareEngineer");
+        共享一个方法：p1.sayName === p2.sayName;
+
+5、原型模式
+        function Person(name,age,job){
+            this.name = name;
+            this.age = age;
+            this.job = job;
+        }
+
+构造函数f();
+其原型对象是：f.prototype；
+原型对象得constructor指向构造函数；
+实例对象new f()的__proto__指向构造函数的原型对象。
+
+isPrototypeOf()
+    判断Person.prototype.isPrototypeOf(p1)是否有关系；
+hasOwnProperty()
+    判断属性属于实例属性还是原型属性
+
+
+
+
+6、原型与in操作符
+        in操作符判断对象中是否含有某个属性，原型属性也可以判断出来。
+        也可以for-in遍历属性
+
+7、通过in操作符和hasOwnProperty()方法可以判断属性一定是原型对象的属性了。
+        function hasPrototypeProperty(object,name){
+            return !object.hasOwnProperty(name) && name in object;
+        }
+只要返回true，说明此属性一定是原型属性继承而来。
+获取对象可枚举属性：Object.keys(obj),返回对象可枚举属性字符串数组。
+原型继承属性是不可枚举的-------------------------
+如果想要获取可以用：Object.getOwnPropertyNames()方法获取
+
+
+function Person(){}
+Person.prototype = {
+    name:"name",
+    age:'age',
+    job:function(){
+        alert(this.name);
+    }
+}
+此方式中，Person.prototype.constructor不再指向Person，
+而是指向了Object构造函数，尽管如此，instanceof仍然返回值正确的结果
+所以，无法确定对象的类型了。
+
+可以使用以下方式指定为Person
+Person.prototype = {
+    constructor:Person,
+    name:"name",
+    age:'age',
+    job:function(){
+        alert(this.name);
+    }
+}
+默认会把constructor的enumerable属性设置为可编辑；
+可以使用Object.defineProperty(obj,name,{})设置
+
+实例和原型是松散连接关系：
+            只有在Person中找不到，才会查找原型中是否含有
+
+
+实例中的指针仅指向原型，并不指向构造函数。--------------------
+function Person(){};
+var friend = new Person();
+Person.prototype = {
+    constructor:Person,
+    name:"name",
+    age:'age',
+    job:function(){
+        alert(this.name);
+    }
+}
+friend.sayName()//报错
+手动制订了constructor为Peoson
+而默认下是指向Object的
+实例也只是指针指向Object的
+所以手动改变后会报错。
+
+原型模式会造成所有实例上默认属性一致，对于引用类型的值修改一个，导致都会被修改。
+
+
+8、原型模式+构造函数模式
+
+//实例属性构建
+function Person(name,age,job){
+    this.name = name;
+    this.age = age;
+    this.job = job;
+}
+//原型属性构建
+Person.prototype = {
+    constructor:Person,
+    sayName:function(){
+        alert(this.name);
+    }
+}
+
+9、动态原型模式:禁止使用对象字面量重写原型，看7解释清楚-----------------------------------------------
+function Person(name,age,job){
+    this.name=name;
+    this.age=age;
+    this.job=job;
+    if(typeof this.sayName != "function"){
+        Person.prototype.sayName = function(){
+            alert(this.name);
+        }
+    }
+}
+此方法，不用判断多个属性，只需要判断一个属性即可，初始化一次之后，不会重复初始化
+
+
+
+10、寄生构造函数模式
+
+function Person(name,age,job){
+    var o = new Object();
+    o.name=name;
+    o.age=age;
+    o.job=job;
+    o.sayName=function(){
+        alert(this.name);
+    }
+    return o;
+}
+例子:构建一个特殊数组，不能直接修改Array构造函数：
+function SpecialArray(){
+    //创建数组
+    var values = new Array();
+    //添加值
+    values.pushapply(values,arguments);
+    //添加方法
+    values.toPipedString = function(){
+        return this.join("|");
+    }
+    //返回数组
+    return values;
+}
+//PS：不能使用instanceof判断对象类型。不建议使用。
+
+
+
+原型链的实现：-------------------------------------------------------------------------------------------
+function SuperType(){
+    this.property = true;
+}
+SuperType.prototype.getSuperValue = function(){
+    return this.property;
+}
+//继承了SuperType
+SubType.prototype = new SuperType();
+
+SubType.prototype.getSubValue = function(){
+    return this.subproperty;
+}
+
+var instance = new SubType();
+alert(instance.getSuperValue());//true
+
+借用构造函数继承：很少单独使用
+call  apply--------可以传参
+
+组合继承：伪经典继承
+原型链和借用构造函数结合实现继承
+
+寄生式继承
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
